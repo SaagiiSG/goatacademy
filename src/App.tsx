@@ -1,21 +1,23 @@
-import { Button } from "@/components/ui/button"
+import { ReactLenis } from "lenis/react"
+import { SignupPage } from "@/pages/signup"
+import { GiftPage } from "@/pages/gift"
+import { AcademyPage } from "@/pages/academy"
+import { TelegramPage } from "@/pages/telegram"
+import { savedName } from "@/lib/signup"
 
-export function App() {
+const PAGES = { "/": SignupPage, "/gift": GiftPage, "/academy": AcademyPage, "/telegram": TelegramPage }
+const path = location.pathname.replace(/\/+$/, "") || "/"
+
+// Soft gate: the gift page sends people who never signed up back to the form.
+// Skipped when the browser blocks storage (savedName() === null) so real sign-ups never loop.
+if (path === "/gift" && savedName() === "") location.replace("/")
+
+export default function App() {
+  const Page = PAGES[path as keyof typeof PAGES] ?? SignupPage
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <>
+      <ReactLenis root options={{ anchors: { offset: -88 } }} />
+      <Page />
+    </>
   )
 }
-
-export default App
